@@ -15,34 +15,37 @@ import br.com.ogawadev.bluetasks.domain.task.Task;
 
 @SpringBootApplication
 public class BluetasksBackendApplication implements RepositoryRestConfigurer{
+
+
+
 	
 	private static final Logger logger = LoggerFactory.getLogger(BluetasksBackendApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(BluetasksBackendApplication.class, args);
 	}
-	
+
 	@Override
 	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-		
+
 		config.exposeIdsFor(Task.class);
 		config.getCorsRegistry()
 			.addMapping("/**")
 			.allowedOrigins("*")
 			.allowedMethods("GET", "POST", "PUT", "DELETE");
-		
+
 		logger.info("Repository CORS setup... OK");
 	}
-	
+
 	@Bean
 	public Validator validator() {
 		return new LocalValidatorFactoryBean();
 	}
-	
+
 	@Override
 	public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {
 		Validator validator = validator();
-		
+
 		validatingListener.addValidator("beforeCreate", validator);
 		validatingListener.addValidator("beforeSave", validator);
 	}
